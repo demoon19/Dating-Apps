@@ -88,15 +88,6 @@ class _PageNotesState extends State<PageNotes> {
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Image.asset(
-                      'assets/img/text-logo.png',
-                      height: 30,
-                    ),
-                  ),
-                ],
               ),
         actions: [
           IconButton(

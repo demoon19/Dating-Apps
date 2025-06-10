@@ -3,7 +3,7 @@ import '../../database/DatabaseHelper.dart';
 import '../../model/financial_model.dart';
 import '../views/page_input_income.dart';
 import '../views/page_input_expense.dart';
-import '../views/dating/page_detail_note.dart';
+import '../views/page_detail_note.dart';
 import '../controllers/other_controllers.dart';
 
 class NoteController {

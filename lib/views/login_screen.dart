@@ -19,13 +19,6 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/img/text-logo.png',
-                height: 30,
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.all(0.0),
               child: Image.asset(
                 'assets/img/logo.png',

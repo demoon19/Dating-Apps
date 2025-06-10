@@ -56,13 +56,6 @@ class _PageImpressionState extends State<PageImpression>
                 height: 30,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                'assets/img/logo.png',
-                height: 60,
-              ),
-            ),
           ],
         ),
       ),

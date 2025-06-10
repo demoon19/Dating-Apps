@@ -4,31 +4,43 @@ class FinancialModel {
   String? keterangan;
   String? jml_uang;
   String? tanggal;
-  String? createdAt; 
+  String? createdAt;
+  double? latitude; // Tambahkan ini
+  double? longitude; // Tambahkan ini
 
-  FinancialModel({this.id, this.tipe, this.keterangan, this.jml_uang, this.tanggal, this.createdAt});
+  FinancialModel({
+    this.id,
+    this.tipe,
+    this.keterangan,
+    this.jml_uang,
+    this.tanggal,
+    this.createdAt,
+    this.latitude, // Tambahkan ini
+    this.longitude, // Tambahkan ini
+  });
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    if (id != null) {
-      map['id'] = id;
-    }
-    map['tipe'] = tipe;
-    map['keterangan'] = keterangan;
-    map['jml_uang'] = jml_uang;
-    map['tanggal'] = tanggal;
-    map['createdAt'] = createdAt;
-
+    var map = <String, dynamic>{
+      'id': id,
+      'tipe': tipe,
+      'keterangan': keterangan,
+      'jml_uang': jml_uang,
+      'tanggal': tanggal,
+      'createdAt': createdAt,
+      'latitude': latitude, // Tambahkan ini
+      'longitude': longitude, // Tambahkan ini
+    };
     return map;
   }
 
   FinancialModel.fromMap(Map<String, dynamic> map) {
-    this.id = map['id'];
-    this.tipe = map['tipe'];
-    this.keterangan = map['keterangan'];
-    this.jml_uang = map['jml_uang'];
-    this.tanggal = map['tanggal'];
-    this.createdAt = map['createdAt'];
+    id = map['id'];
+    tipe = map['tipe'];
+    keterangan = map['keterangan'];
+    jml_uang = map['jml_uang'];
+    tanggal = map['tanggal'];
+    createdAt = map['createdAt'];
+    latitude = map['latitude']; // Tambahkan ini
+    longitude = map['longitude']; // Tambahkan ini
   }
-
 }

@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OtherController {
-    // Fungsi untuk mengonversi angka menjadi format mata uang Rupiah
+  // Fungsi untuk mengonversi angka menjadi format mata uang Rupiah
   static String convertToIdr(dynamic number) {
     // Membuat objek formatter untuk format mata uang Rupiah dengan dua digit desimal
     NumberFormat currencyFormatter = NumberFormat.currency(
@@ -13,7 +13,6 @@ class OtherController {
     // Mengembalikan angka yang telah dikonversi menjadi format mata uang Rupiah
     return currencyFormatter.format(number);
   }
-
 
   // Fungsi untuk membuka tautan website di tab baru
   Future<void> launchURL(String url) async {
@@ -37,15 +36,13 @@ class OtherController {
     return currentTime;
   }
 
-
- // Fungsi untuk menampilkan informasi zona waktu dan jumlah uang
+  // Fungsi untuk menampilkan informasi zona waktu dan jumlah uang
   String formatAmount(String zone, double amount) {
     // Mengonversi jumlah uang menjadi string dengan dua digit desimal
     String _amount = amount.toStringAsFixed(2);
     // Mengembalikan string yang berisi informasi zona waktu dan jumlah uang
-    return "Uang dalam ${zone} : ${_amount}";
+    return "${zone} : ${_amount}";
   }
-
 
   // Fungsi untuk memformat string tanggal dan waktu ke format yang lebih mudah dibaca
   String formatTime(String dateTimeString) {
@@ -61,5 +58,4 @@ class OtherController {
     // Mengembalikan string yang memformat tanggal dan waktu ke format yang lebih mudah dibaca
     return '$day-$month-$year, $hour:$minute:$second WIB';
   }
-
 }
