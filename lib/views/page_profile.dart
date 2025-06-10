@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/img/foto.png'),
+                      backgroundImage: AssetImage('assets/img/foto.JPG'),
                       radius: 120,
                     ),
                   ),
@@ -92,8 +92,8 @@ class ProfilePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _infoProfile('Nama', 'Muhammad Abdanul Ikhlas'),
-                      _infoProfile('NIM', '123210009'),
+                      _infoProfile('Nama', 'Dewangga Mukti Wibawa'),
+                      _infoProfile('NIM', '123220208'),
                       _infoProfile('Username', profileData['username']!),
                       _infoProfile('Password Enkripsi', encryptedPassword),
                       _infoProfile('Password Deskripsi', decryptedPassword),
