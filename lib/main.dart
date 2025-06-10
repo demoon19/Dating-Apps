@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'controllers/initializer.dart';
+// Mengubah import dari initializer ke layar kencan baru
+import 'views/dating/page_dating_home.dart'; 
 
 // Definisikan warna utama
 const int primaryColorHex = 0xFF5c5c54;
@@ -20,17 +21,12 @@ const MaterialColor primarySwatch = MaterialColor(
 );
 
 void main() {
-  runApp(const MyApp());
+  runApp(const EconomeDatingApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class EconomeDatingApp extends StatelessWidget {
+  const EconomeDatingApp({Key? key}) : super(key: key);
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -59,8 +55,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      // home: BottomNavbar(),
-      home: Initializer(),
+      // Mengarahkan ke layar utama aplikasi kencan
+      home: DatingHomeScreen(),
     );
   }
 }

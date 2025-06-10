@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../model/financial_model.dart';
-import '../database/DatabaseHelper.dart';
-import 'page_input_income.dart';
-import 'page_input_expense.dart';
-import 'bottom_navbar.dart';
-import '../services/base_network.dart';
-import '../controllers/other_controllers.dart';
+import '../../model/financial_model.dart';
+import '../../database/DatabaseHelper.dart';
+import '../page_input_income.dart';
+import '../page_input_expense.dart';
+import '../bottom_navbar.dart';
+import '../../services/base_network.dart';
+import '../../controllers/other_controllers.dart';
 
 class DetailNote extends StatefulWidget {
   final FinancialModel financialModel;
