@@ -1,3 +1,4 @@
+import 'package:datting/views/dating/page_dating_home.dart';
 import 'package:flutter/material.dart';
 import '../database/admin_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,7 +40,6 @@ class AuthController {
     return encryptedPassword;
   }
 
-
   // Fungsi untuk mendekripsi password yang dienkripsi menggunakan cipher substitusi sederhana.
   String _decryptPassword(String encryptedPassword) {
     String decryptedPassword = '';
@@ -61,33 +61,31 @@ class AuthController {
     return decryptedPassword;
   }
 
-
   Future<void> login(
       BuildContext context, String username, String password) async {
     try {
-      // Verifikasi kredensial login
       final response =
           await _adminService.verifyLogin(username, _encryptPassword(password));
       if (response != null) {
-        // Jika login berhasil, simpan ID admin dan username dalam SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         prefs.setInt('admin_id', response.id);
         prefs.setString('admin_username', response.username);
         print('Login berhasil');
-        // Arahkan ke layar BottomNavbar
+        
+        if (!context.mounted) return;
+        // Arahkan ke layar DatingHomeScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) {
-            return BottomNavbar();
+            return const DatingHomeScreen(); // <-- DIUBAH DI SINI
           }),
         );
       } else {
-        // Jika login gagal, cetak pesan kesalahan dan lempar exception
         print('Kredensial tidak valid');
         throw ('Username atau password tidak valid');
       }
     } catch (e) {
-      // Tangkap semua kesalahan dan tampilkan pesan Snackbar
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error saat login: $e'),
@@ -96,7 +94,6 @@ class AuthController {
       print('Error saat login: $e');
     }
   }
-
 
   Future<bool> verifyAdmin(
       BuildContext context, String username, String password) async {
@@ -120,7 +117,6 @@ class AuthController {
       return false;
     }
   }
-
 
   Future<void> register(
       BuildContext context, String username, String password) async {
@@ -161,7 +157,6 @@ class AuthController {
     }
   }
 
-
   String getEncryptedPassword(String password) {
     // Mendapatkan versi terenkripsi dari password
     return _encryptPassword(password);
@@ -201,7 +196,6 @@ class AuthController {
         await _adminService.getPasswordByUsername(username);
     return encryptedPassword;
   }
-
 
   Future<bool> isLoggedIn() async {
     try {

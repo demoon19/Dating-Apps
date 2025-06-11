@@ -3,11 +3,12 @@ import '../database/DatabaseHelper.dart';
 import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
+import '../services/notification_service.dart';
 
 class PageInputExpense extends StatefulWidget {
   final FinancialModel? financialModel;
 
-  PageInputExpense({this.financialModel});
+  const PageInputExpense({Key? key, this.financialModel}) : super(key: key);
 
   @override
   _PageInputExpenseState createState() => _PageInputExpenseState();
@@ -25,9 +26,11 @@ class _PageInputExpenseState extends State<PageInputExpense> {
   @override
   void initState() {
     super.initState();
-    keterangan = TextEditingController(text: widget.financialModel?.keterangan ?? '');
+    keterangan =
+        TextEditingController(text: widget.financialModel?.keterangan ?? '');
     tanggal = TextEditingController(text: widget.financialModel?.tanggal ?? '');
-    jml_uang = TextEditingController(text: widget.financialModel?.jml_uang ?? '');
+    jml_uang =
+        TextEditingController(text: widget.financialModel?.jml_uang ?? '');
     _getCurrentLocation();
   }
 
@@ -69,26 +72,74 @@ class _PageInputExpenseState extends State<PageInputExpense> {
     });
   }
 
+  Future<void> upsertData() async {
+    if (widget.financialModel != null) {
+      //update
+      await databaseHelper.updateData(
+          FinancialModel(
+            id: widget.financialModel!.id,
+            tipe: 'pengeluaran',
+            keterangan: keterangan!.text,
+            jml_uang: jml_uang!.text,
+            tanggal: tanggal!.text,
+            createdAt: widget.financialModel!.createdAt,
+            latitude: _locationData?.latitude,
+            longitude: _locationData?.longitude,
+          ),
+          "pengeluaran");
+
+      // Notifikasi untuk update
+      NotificationService.showNotification(
+          id: widget.financialModel!.id!,
+          title: "Catatan Diperbarui",
+          body: "Pengeluaran '${keterangan!.text}' telah diperbarui.");
+
+      if (!mounted) return;
+      Navigator.pop(context, 'update');
+    } else {
+      //insert
+      await databaseHelper.saveData(FinancialModel(
+        tipe: 'pengeluaran',
+        keterangan: keterangan!.text,
+        jml_uang: jml_uang!.text,
+        tanggal: tanggal!.text,
+        createdAt: DateTime.now().toIso8601String(),
+        latitude: _locationData?.latitude,
+        longitude: _locationData?.longitude,
+      ));
+
+      // Notifikasi untuk insert
+      NotificationService.showNotification(
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          title: "Catatan Ditambahkan",
+          body: "Pengeluaran baru '${keterangan!.text}' berhasil disimpan.");
+
+      if (!mounted) return;
+      Navigator.pop(context, 'save');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: Color(0xFFa7a597),
-        title: Text('Form Data Pengeluaran', style: const TextStyle(fontSize: 14, color: Colors.white)),
+        backgroundColor: const Color(0xFFa7a597),
+        title: const Text('Form Data Pengeluaran',
+            style: TextStyle(fontSize: 14, color: Colors.white)),
       ),
       body: ListView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         children: [
           TextField(
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.text,
             controller: keterangan,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             cursorColor: Colors.white,
             decoration: InputDecoration(
                 labelText: 'Keterangan',
@@ -110,7 +161,9 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(onPrimary: Colors.white, onBackground: Colors.white),
+                          colorScheme: const ColorScheme.light(
+                              onPrimary: Colors.white,
+                              onBackground: Colors.white),
                           datePickerTheme: const DatePickerThemeData(
                             backgroundColor: Color.fromARGB(255, 197, 197, 197),
                             headerBackgroundColor: Color(0xFFa7a597),
@@ -125,7 +178,8 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                     firstDate: DateTime(1900),
                     lastDate: DateTime(9999));
                 if (pickedDate != null) {
-                  tanggal!.text = DateFormat('dd MMM yyyy').format(pickedDate);
+                  tanggal!.text =
+                      DateFormat('dd MMM yyyy').format(pickedDate);
                 }
               },
               controller: tanggal,
@@ -145,7 +199,7 @@ class _PageInputExpenseState extends State<PageInputExpense> {
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.number,
               controller: jml_uang,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               cursorColor: Colors.white,
               decoration: InputDecoration(
                   labelText: 'Jumlah Uang',
@@ -155,23 +209,24 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                   )),
             ),
           ),
-           if (_isGettingLocation)
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
+          if (_isGettingLocation)
+            const Padding(
+              padding: EdgeInsets.only(top: 20),
               child: Center(child: CircularProgressIndicator()),
             )
           else if (_locationData != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
+            const Padding(
+              padding: EdgeInsets.only(top: 20),
               child: Text(
                 'Lokasi Telah Tercatat',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
               ),
             )
-           else
-             Padding(
-              padding: const EdgeInsets.only(top: 20),
+          else
+            const Padding(
+              padding: EdgeInsets.only(top: 20),
               child: Text(
                 'Gagal mendapatkan lokasi. Pastikan GPS aktif.',
                 textAlign: TextAlign.center,
@@ -188,7 +243,7 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                 height: 50,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Color(0xFFa7a597)),
+                    color: const Color(0xFFa7a597)),
                 child: Material(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.transparent,
@@ -196,8 +251,11 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      if (keterangan!.text.isEmpty || tanggal!.text.isEmpty || jml_uang!.text.isEmpty) {
-                        const snackBar = SnackBar(content: Text("Ups, form tidak boleh ada yang kosong!"));
+                      if (keterangan!.text.isEmpty ||
+                          tanggal!.text.isEmpty ||
+                          jml_uang!.text.isEmpty) {
+                        const snackBar = SnackBar(
+                            content: Text("Ups, form tidak boleh ada yang kosong!"));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
                         upsertData();
@@ -205,8 +263,12 @@ class _PageInputExpenseState extends State<PageInputExpense> {
                     },
                     child: Center(
                       child: (widget.financialModel == null)
-                          ? Text('Tambah Data', style: TextStyle(fontSize: 14, color: Colors.white))
-                          : Text('Update Data', style: TextStyle(fontSize: 14, color: Colors.white)),
+                          ? const Text('Tambah Data',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white))
+                          : const Text('Update Data',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white)),
                     ),
                   ),
                 ),
@@ -216,36 +278,5 @@ class _PageInputExpenseState extends State<PageInputExpense> {
         ],
       ),
     );
-  }
-
-  Future<void> upsertData() async {
-    if (widget.financialModel != null) {
-      //update
-      await databaseHelper.updateData(
-          FinancialModel(
-            id: widget.financialModel!.id,
-            tipe: 'pengeluaran',
-            keterangan: keterangan!.text,
-            jml_uang: jml_uang!.text,
-            tanggal: tanggal!.text,
-            createdAt: widget.financialModel!.createdAt,
-            latitude: _locationData?.latitude,
-            longitude: _locationData?.longitude,
-          ),
-          "pengeluaran");
-      Navigator.pop(context, 'update');
-    } else {
-      //insert
-      await databaseHelper.saveData(FinancialModel(
-        tipe: 'pengeluaran',
-        keterangan: keterangan!.text,
-        jml_uang: jml_uang!.text,
-        tanggal: tanggal!.text,
-        createdAt: DateTime.now().toIso8601String(),
-        latitude: _locationData?.latitude,
-        longitude: _locationData?.longitude,
-      ));
-      Navigator.pop(context, 'save');
-    }
   }
 }

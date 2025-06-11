@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/dating_profile_model.dart';
-import '../controllers/initializer.dart';
+// Hapus import initializer dan ganti dengan page_notes
+import '../views/page_notes.dart';
 
 class ProfileCard extends StatelessWidget {
   final DatingProfile profile;
@@ -21,7 +22,7 @@ class ProfileCard extends StatelessWidget {
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -75,20 +76,25 @@ class ProfileCard extends StatelessWidget {
                     // Tombol Kelola Keuangan dengan Teks
                     ElevatedButton.icon(
                       onPressed: () {
+                        // <<< PERUBAHAN DI SINI >>>
+                        // Arahkan langsung ke halaman catatan keuangan
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Initializer()),
+                          MaterialPageRoute(
+                              builder: (context) => const PageNotes()),
                         );
                       },
                       icon: const Icon(Icons.account_balance_wallet, size: 18),
                       label: const Text('Kelola Keuangan'),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white, // Warna ikon dan teks
-                        backgroundColor: const Color(0xFFb2855d), // Warna latar tombol
+                        backgroundColor:
+                            const Color(0xFFb2855d), // Warna latar tombol
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                     ),
                   ],
@@ -106,7 +112,8 @@ class ProfileCard extends StatelessWidget {
                 // Jarak
                 Row(
                   children: [
-                    const Icon(Icons.location_on, color: Colors.white70, size: 16),
+                    const Icon(Icons.location_on,
+                        color: Colors.white70, size: 16),
                     const SizedBox(width: 4),
                     Text(
                       profile.distance,

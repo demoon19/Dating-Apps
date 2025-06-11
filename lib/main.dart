@@ -1,3 +1,4 @@
+import 'package:datting/controllers/initializer.dart';
 import 'package:flutter/material.dart';
 import 'views/dating/page_dating_home.dart';
 import 'services/notification_service.dart'; // <-- Import service notifikasi
@@ -61,7 +62,7 @@ class EconomeDatingApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const DatingHomeScreen(),
+      home: Initializer(),
     );
   }
 }

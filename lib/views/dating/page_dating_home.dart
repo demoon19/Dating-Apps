@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'package:datting/views/page_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import '../../model/dating_profile_model.dart';
+import '../../services/notification_service.dart';
 import '../../widgets/profile_card.dart';
-import 'page_nearby.dart';
 import 'page_liked.dart';
-import '../../services/notification_service.dart'; // <-- Import service notifikasi
+import 'page_nearby.dart';
+import '../page_profile.dart';
 
 class DatingHomeScreen extends StatefulWidget {
   const DatingHomeScreen({Key? key}) : super(key: key);
@@ -50,22 +52,27 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
     super.initState();
     _profiles = List<DatingProfile>.from(_originalProfiles);
 
+    // Mulai mendengarkan sensor akselerometer untuk fitur goyangan
     _accelerometerSubscription =
         accelerometerEventStream().listen((AccelerometerEvent event) {
       if (_isShakeCooldown || _profiles.isEmpty) return;
 
       const double shakeThreshold = 12.0;
 
+      // Goyang ke kanan (nilai x > threshold) -> Suka
       if (event.x > shakeThreshold) {
         _like();
         _startShakeCooldown();
-      } else if (event.x < -shakeThreshold) {
+      }
+      // Goyang ke kiri (nilai x < -threshold) -> Tidak Suka
+      else if (event.x < -shakeThreshold) {
         _dislike();
         _startShakeCooldown();
       }
     });
   }
 
+  // Mencegah beberapa aksi dari satu goyangan
   void _startShakeCooldown() {
     setState(() {
       _isShakeCooldown = true;
@@ -78,13 +85,15 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
       }
     });
   }
-  
+
+  // Menangani aksi 'unlike' dari halaman profil yang disukai
   void _unlikeProfile(DatingProfile profile) {
     setState(() {
       _likedProfiles.remove(profile);
     });
   }
 
+  // Memuat ulang daftar profil ke kondisi awal
   void _refreshProfiles() {
     setState(() {
       _profiles = List<DatingProfile>.from(_originalProfiles);
@@ -97,6 +106,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
     );
   }
 
+  // Menghapus profil teratas dari dek
   void _dismissProfile() {
     setState(() {
       if (_profiles.isNotEmpty) {
@@ -105,18 +115,19 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
     });
   }
 
+  // Aksi untuk tidak menyukai profil
   void _dislike() {
     if (_profiles.isEmpty) return;
-    
-    // Tampilkan notifikasi
+
     NotificationService.showNotification(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: 'Profil Dilewati',
         body: 'Anda telah melewati profil ${_profiles.first.name}.');
-        
+
     _dismissProfile();
   }
 
+  // Aksi untuk menyukai profil
   void _like() {
     if (_profiles.isEmpty) return;
     final likedProfile = _profiles[0];
@@ -127,15 +138,15 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
       });
     }
 
-    // Tampilkan notifikasi
     NotificationService.showNotification(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: 'Anda Menyukai Seseorang!',
         body: 'Anda baru saja menyukai ${likedProfile.name}.');
-        
+
     _dismissProfile();
   }
 
+  // Aksi untuk 'Super Like'
   void _superLike() {
     if (_profiles.isEmpty) return;
     final likedProfile = _profiles[0];
@@ -145,25 +156,24 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
         _likedProfiles.add(likedProfile);
       });
     }
-    
-    // Tampilkan notifikasi untuk Super Like
+
     NotificationService.showNotification(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: 'Super Like!',
         body: 'Anda memberi Super Like pada ${likedProfile.name}!');
-        
+
     _dismissProfile();
   }
-  
+
   @override
   void dispose() {
+    // Selalu batalkan subscription untuk menghindari kebocoran memori
     _accelerometerSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // ... sisa kode build widget tidak berubah
     return Scaffold(
       appBar: AppBar(
         title: const Text('Datting Apps',
@@ -173,7 +183,17 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite),
+            icon: const Icon(Icons.person_outline),
+            tooltip: 'Profil Saya',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
             tooltip: 'Profil Disukai',
             onPressed: () {
               Navigator.push(
@@ -193,7 +213,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
             onPressed: _refreshProfiles,
           ),
           IconButton(
-            icon: const Icon(Icons.near_me),
+            icon: const Icon(Icons.near_me_outlined),
             tooltip: 'Pengguna Terdekat',
             onPressed: () {
               final profileListCopy = List<DatingProfile>.from(_profiles);
@@ -247,9 +267,9 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
       onDragEnd: (details) {
         if (details.velocity.pixelsPerSecond.dx.abs() > 200) {
           if (details.velocity.pixelsPerSecond.dx > 0) {
-            _like();
+            _like(); // Geser ke kanan
           } else {
-            _dislike();
+            _dislike(); // Geser ke kiri
           }
         }
       },
