@@ -17,15 +17,6 @@ class RegisterScreen extends StatelessWidget {
         backgroundColor: Color(0xFF585752),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/img/text-logo.png',
-                height: 30,
-              ),
-            ),
-          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -51,7 +42,7 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         Image.asset(
-                          'assets/img/regist-illustration.png',
+                          'assets/img/login-illustration.jpg',
                           height: 180,
                         ),
                         SizedBox(height: 50),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// Mengubah import dari initializer ke layar kencan baru
-import 'views/dating/page_dating_home.dart'; 
+import 'views/dating/page_dating_home.dart';
+import 'services/notification_service.dart'; // <-- Import service notifikasi
 
 // Definisikan warna utama
 const int primaryColorHex = 0xFF5c5c54;
@@ -20,7 +20,13 @@ const MaterialColor primarySwatch = MaterialColor(
   },
 );
 
-void main() {
+void main() async {
+  // <-- Ubah menjadi async
+  // Pastikan binding Flutter sudah siap
+  WidgetsFlutterBinding.ensureInitialized();
+  // Inisialisasi service notifikasi
+  await NotificationService.init();
+
   runApp(const EconomeDatingApp());
 }
 
@@ -33,16 +39,16 @@ class EconomeDatingApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         primarySwatch: primarySwatch,
-        primaryColor: Color(primaryColorHex),
-        scaffoldBackgroundColor: Color(0xFF424242),
+        primaryColor: const Color(primaryColorHex),
+        scaffoldBackgroundColor: const Color(0xFF424242),
         splashColor: Colors.white,
         highlightColor: Colors.white,
         brightness: Brightness.dark,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color(primaryColorHex),
         ),
         cardTheme: const CardThemeData(
-          color: Color(0xFFa7a597), // Warna kartu
+          color: Color(0xFFa7a597),
           elevation: 4,
           margin: EdgeInsets.all(8),
         ),
@@ -55,8 +61,7 @@ class EconomeDatingApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      // Mengarahkan ke layar utama aplikasi kencan
-      home: DatingHomeScreen(),
+      home: const DatingHomeScreen(),
     );
   }
 }

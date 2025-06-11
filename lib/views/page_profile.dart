@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../controllers/auth_controller.dart';
+import '../controllers/auth_controller.dart';
 
 class ProfilePage extends StatelessWidget {
   AuthController authController = AuthController();
@@ -36,22 +36,6 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Color(0xFF585752),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/img/text-logo.png',
-                height: 30,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                'assets/img/logo.png',
-                height: 60,
-              ),
-            ),
-          ],
         ),
       ),
       body: SingleChildScrollView(

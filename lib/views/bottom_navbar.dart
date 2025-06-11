@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'page_impression.dart';
-import 'dating/page_profile.dart';
+import 'page_profile.dart';
 import 'page_notes.dart';
 
 class BottomNavbar extends StatefulWidget {

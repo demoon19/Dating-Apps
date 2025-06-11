@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import '../../model/dating_profile_model.dart';
 import '../../widgets/profile_card.dart';
-import '../../controllers/initializer.dart';
 import 'page_nearby.dart';
 import 'page_liked.dart';
+import '../../services/notification_service.dart'; // <-- Import service notifikasi
 
 class DatingHomeScreen extends StatefulWidget {
   const DatingHomeScreen({Key? key}) : super(key: key);
@@ -13,6 +15,9 @@ class DatingHomeScreen extends StatefulWidget {
 }
 
 class _DatingHomeScreenState extends State<DatingHomeScreen> {
+  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  bool _isShakeCooldown = false;
+
   final List<DatingProfile> _originalProfiles = [
     DatingProfile(
       name: 'Rina',
@@ -44,9 +49,36 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
   void initState() {
     super.initState();
     _profiles = List<DatingProfile>.from(_originalProfiles);
+
+    _accelerometerSubscription =
+        accelerometerEventStream().listen((AccelerometerEvent event) {
+      if (_isShakeCooldown || _profiles.isEmpty) return;
+
+      const double shakeThreshold = 12.0;
+
+      if (event.x > shakeThreshold) {
+        _like();
+        _startShakeCooldown();
+      } else if (event.x < -shakeThreshold) {
+        _dislike();
+        _startShakeCooldown();
+      }
+    });
   }
 
-  // 1. Tambahkan fungsi untuk menangani aksi unlike dari halaman lain
+  void _startShakeCooldown() {
+    setState(() {
+      _isShakeCooldown = true;
+    });
+    Timer(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        setState(() {
+          _isShakeCooldown = false;
+        });
+      }
+    });
+  }
+  
   void _unlikeProfile(DatingProfile profile) {
     setState(() {
       _likedProfiles.remove(profile);
@@ -58,7 +90,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
       _profiles = List<DatingProfile>.from(_originalProfiles);
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Daftar profil telah dimuat ulang!'),
         duration: Duration(seconds: 1),
       ),
@@ -75,6 +107,13 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
 
   void _dislike() {
     if (_profiles.isEmpty) return;
+    
+    // Tampilkan notifikasi
+    NotificationService.showNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: 'Profil Dilewati',
+        body: 'Anda telah melewati profil ${_profiles.first.name}.');
+        
     _dismissProfile();
   }
 
@@ -88,13 +127,12 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
       });
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Anda menyukai ${likedProfile.name}!'),
-        duration: Duration(seconds: 1),
-        backgroundColor: Colors.green,
-      ),
-    );
+    // Tampilkan notifikasi
+    NotificationService.showNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: 'Anda Menyukai Seseorang!',
+        body: 'Anda baru saja menyukai ${likedProfile.name}.');
+        
     _dismissProfile();
   }
 
@@ -107,50 +145,55 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
         _likedProfiles.add(likedProfile);
       });
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Anda memberi Super Like pada ${likedProfile.name}!'),
-        duration: Duration(seconds: 1),
-        backgroundColor: Colors.blue,
-      ),
-    );
+    
+    // Tampilkan notifikasi untuk Super Like
+    NotificationService.showNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: 'Super Like!',
+        body: 'Anda memberi Super Like pada ${likedProfile.name}!');
+        
     _dismissProfile();
+  }
+  
+  @override
+  void dispose() {
+    _accelerometerSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // ... sisa kode build widget tidak berubah
     return Scaffold(
       appBar: AppBar(
-        title: Text('Datting Apps',
+        title: const Text('Datting Apps',
             style: TextStyle(
                 color: Color(0xFFF0F1DA), fontWeight: FontWeight.bold)),
-        backgroundColor: Color(0xFF585752),
+        backgroundColor: const Color(0xFF585752),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite),
+            icon: const Icon(Icons.favorite),
             tooltip: 'Profil Disukai',
             onPressed: () {
-              // 2. Perbarui navigasi untuk mengirim fungsi callback
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => LikedProfilesScreen(
                     likedProfiles: _likedProfiles,
-                    onUnlike: _unlikeProfile, // Kirim fungsi ke child
+                    onUnlike: _unlikeProfile,
                   ),
                 ),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             tooltip: 'Muat Ulang Profil',
             onPressed: _refreshProfiles,
           ),
           IconButton(
-            icon: Icon(Icons.near_me),
+            icon: const Icon(Icons.near_me),
             tooltip: 'Pengguna Terdekat',
             onPressed: () {
               final profileListCopy = List<DatingProfile>.from(_profiles);
@@ -172,7 +215,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
             Expanded(
               child: _buildProfileCard(),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildActionButtons(),
           ],
         ),
@@ -182,7 +225,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
 
   Widget _buildProfileCard() {
     if (_profiles.isEmpty) {
-      return Center(
+      return const Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -243,7 +286,7 @@ class _DatingHomeScreenState extends State<DatingHomeScreen> {
         color: isEnabled ? Colors.white : Colors.grey.shade800,
         boxShadow: isEnabled
             ? [
-                BoxShadow(
+                const BoxShadow(
                     color: Colors.black26, blurRadius: 5, spreadRadius: 1),
               ]
             : [],

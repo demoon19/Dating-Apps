@@ -48,15 +48,6 @@ class _PageImpressionState extends State<PageImpression>
         backgroundColor: Color(0xFF585752),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/img/text-logo.png',
-                height: 30,
-              ),
-            ),
-          ],
         ),
       ),
       body: Center(
@@ -75,7 +66,7 @@ class _PageImpressionState extends State<PageImpression>
               ),
               SizedBox(height: 10),
               Text(
-                'Matkul TPM ini menjadi salah satu matkul yang cukup menantang, karena sangat aktif, aktif dari segi penugasan, kuis, dan penugasan lagi. Namun dari tugas tugas yang diberikan yah cukup memberikan pengalaman dalam membuat aplikasi mobile dan cukup membuat begadang berhari hari terutama yang Project Akhir ',
+                'Matkul TPM ini sangat membantu saya dalam menambah insomnia dan melewati batas limit yang mungkin saya kira sudah mentok sampai disitu namun dengan adanya TPM saya yakin saya bisa melampauinya',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,

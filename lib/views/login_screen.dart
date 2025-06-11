@@ -1,5 +1,8 @@
+// lib/views/login_screen.dart
+
 import 'package:flutter/material.dart';
 import '../controllers/auth_controller.dart';
+import 'register_screen.dart'; // <-- Import ditambahkan untuk halaman registrasi
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _usernameController =
@@ -15,17 +18,10 @@ class LoginScreen extends StatelessWidget {
       backgroundColor: Color(0xFF424242),
       appBar: AppBar(
         backgroundColor: Color(0xFF585752),
+        // Menghilangkan tombol kembali karena ini halaman awal sesi
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                'assets/img/logo.png',
-                height: 60,
-              ),
-            ),
-          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -48,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Image.asset(
-                  'assets/img/login-illustration.png',
+                  'assets/img/login-illustration.jpg',
                   height: 180,
                 ),
                 SizedBox(height: 50),
@@ -110,6 +106,37 @@ class LoginScreen extends StatelessWidget {
                   ),
                   child: Text('Login'),
                 ),
+
+                // --- FITUR NAVIGASI REGISTRASI DITAMBAHKAN DI SINI ---
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Belum punya akun? ",
+                      style: TextStyle(color: Color(0xFFF0F1DA)),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Arahkan ke halaman registrasi
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterScreen()),
+                        );
+                      },
+                      child: Text(
+                        'Daftar sekarang',
+                        style: TextStyle(
+                          color: Color(0xFFb2855d),
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // --- BATAS PENAMBAHAN FITUR ---
               ],
             ),
           ),
